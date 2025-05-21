@@ -1,0 +1,13 @@
+{
+    "files.associations": {
+        "watek_glowny.h": "c",
+        "watek_komunikacyjny.h": "c",
+        "bit": "c",
+        "functional": "c",
+        "string_view": "c",
+        "random": "c",
+        "istream": "c",
+        "limits": "c",
+        "numeric": "c"
+    }
+}

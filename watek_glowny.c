@@ -6,25 +6,43 @@ void mainLoop()
     srandom(rank);
     int tag;
 
-    while (stan != InFinish) {
-        int perc = random()%100; 
+    while (1)
+    {
+        switch (stan)
+        {
+        case IDLE:
+            int perc = random() % 100;
 
-        if (perc<STATE_CHANGE_PROB) {
-            if (stan==InRun) {
-		debug("Zmieniam stan na wysyłanie");
-		changeState( InSend );
-		packet_t *pkt = malloc(sizeof(packet_t));
-		pkt->data = perc;
-		perc = random()%100;
-		tag = ( perc < 25 ) ? FINISH : APP_PKT;
-		debug("Perc: %d", perc);
-		
-		sendPacket( pkt, (rank+1)%size, tag);
-		changeState( InRun );
-		debug("Skończyłem wysyłać");
-            } else {
+            if (perc < STATE_CHANGE_PROB)
+            {
+                debug("Zaczynam wysyłać");
+
+                packet_t *pkt = malloc(sizeof(packet_t));
+
+                if (rank < BABCIE)
+                {
+                    tag = REQ_JAR;
+                    pkt->ts = ts++;
+                    sendPacketToBabcie(pkt, tag);
+                }
+                else
+                {
+                    tag = REQ_JAM;
+                    sendPacketToWnuczki(pkt, tag);
+                }
+
+                changeState(WAIT);
+                debug("Skończyłam wysyłać i zmieniam stan na WAIT");
             }
+
+            break;
+
+        case WAIT:
+            
+        default:
+            break;
         }
+
         sleep(SEC_IN_STATE);
     }
 }
