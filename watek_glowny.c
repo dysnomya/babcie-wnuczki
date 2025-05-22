@@ -16,9 +16,13 @@ void mainLoop()
 
             if (perc < STATE_CHANGE_PROB)
             {
-                debug("Zaczynam wysyłać");
+                // debug("Zaczynam wysyłać");
+                debug("LET ME INNNNN")
 
                 packet_t *pkt = malloc(sizeof(packet_t));
+                pkt->src = rank;
+
+                // TODO: THERE IS A PROBLEM WHEN THERE IS 1 PROCESS IN A GROUP: HE DOESNT SEND SO WHY WOULD HE MAKE HIS CLOCK HIGHER + idk what with clock. i mean it works just is it correct? XD
 
                 changeAckNum(0); // before changing state so that they dont send ack earlier
                 incrementClock();
@@ -40,7 +44,7 @@ void mainLoop()
                 changeState(WAIT);
                 printQueue();
 
-                debug("Skończyłam wysyłać i zmieniam stan na WAIT");
+                debug("SKOŃCZYŁEM WYSYŁAĆ TO TERAZ CZEKAM NA WEJŚCIE DO SEKCJI KRYTYCZNEJ");
             }
 
             break;
@@ -70,7 +74,8 @@ void mainLoop()
 
             if (perc < STATE_CHANGE_PROB)
             {
-                debug("Opuszczam sekcję i zaczynam wysyłać");
+                debug("OPUSZCZAM SEKCJĘ KRYTYCZNĄ")
+                // debug("Opuszczam sekcję i zaczynam wysyłać");
                 changeState(IDLE);
 
                 packet_t *pkt = malloc(sizeof(packet_t));
@@ -80,12 +85,12 @@ void mainLoop()
                 tag = RELEASE;
                 sendPacketToEveryone(pkt, tag, ts);
 
-                debug("Skończyłam wysyłać");
+                // debug("Skończyłam wysyłać");
 
                 changeResource(-1);
 
                 queueRemove(rank);
-                printQueue();
+                // printQueue();
             }
             break;
         default:

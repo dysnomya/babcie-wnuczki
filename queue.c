@@ -63,6 +63,7 @@ int isPositionValid(int pid)
     int iterSize;
 
     iterSize = MIN(pq.size, resource);
+    debug("%d", iterSize);
 
     while (i < iterSize)
     {   

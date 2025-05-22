@@ -15,7 +15,7 @@ void *startKomWatek(void *ptr)
         MPI_Recv(&pakiet, 1, MPI_PAKIET_T, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
         changeClock(pakiet.ts);
 
-        debug("Dostałem %s od %d", tag2string(status.MPI_TAG), pakiet.src);
+        // debug("Dostałem %s od %d", tag2string(status.MPI_TAG), pakiet.src);
         
 
         switch (status.MPI_TAG)
@@ -26,7 +26,7 @@ void *startKomWatek(void *ptr)
             sendPacket(pkt, pakiet.src, ACK, ts);
 
             queueInsert(pakiet);
-            printQueue();
+            // printQueue();
 
             break;
         case ACK:
