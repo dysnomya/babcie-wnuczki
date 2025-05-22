@@ -29,9 +29,9 @@ typedef enum
 {
     IDLE,
     WAIT,
-    INSECTION,
-    WORKING
+    INSECTION
 } state_t;
+
 extern state_t stan;
 extern pthread_t threadKom, threadMon;
 
@@ -39,9 +39,10 @@ extern pthread_mutex_t stateMut;
 extern pthread_mutex_t clockMut;
 extern pthread_mutex_t queueMut;
 extern pthread_mutex_t ackMut;
+extern pthread_mutex_t critMut;
 
-extern int jar;
-extern int jam;
+extern int resource;
+
 extern int ts;
 extern int ack_num;
 
@@ -66,19 +67,36 @@ extern PriorityQueue pq;
 
 */
 
+const char const *tag2string(int tag);
+const char const *state2string(state_t state);
+
+
 #ifdef DEBUG
-#define debug(FORMAT,...) printf("%c[%d;%dm [%d] [%08d] " FORMAT "%c[%d;%dm\n",  27, (1+(rank/7))%2, 31+(6+rank)%7, rank, ts, ##__VA_ARGS__, 27,0,37);
+// np: [4] [00000013] [IN  ] [1] <- [RANK] [CLOCK] [STAN] [RESOURCE]
+#define debug(FORMAT,...) printf("%c[%d;%dm [%d] [%08d] [%s] [%d] " FORMAT "%c[%d;%dm\n",  27, (1+(rank/7))%2, 31+(6+rank)%7, rank, ts, state2string(stan), resource, ##__VA_ARGS__, 27,0,37);
 #else
 #define debug(...) ;
 #endif
 
 // makro println - to samo co debug, ale wyświetla się zawsze
-#define println(FORMAT,...) printf("%c[%d;%dm [%d] [%08d] " FORMAT "%c[%d;%dm\n",  27, (1+(rank/7))%2, 31+(6+rank)%7, rank, ts, ##__VA_ARGS__, 27,0,37);
+#define println(FORMAT,...) printf("%c[%d;%dm [%d] [%08d] [%s] [%d] " FORMAT "%c[%d;%dm\n",  27, (1+(rank/7))%2, 31+(6+rank)%7, rank, ts, state2string(stan), resource, ##__VA_ARGS__, 27,0,37);
+
+
 
 void changeState(state_t);
 
-void changeClock(int newClock);
+void incrementClock();
+
+void changeClock(int packetClock);
 
 void changeAckNum(int newAck);
+
+int isPositionValid(int pid);
+
+void changeResource(int num);
+
+int canBabciaEnterCs();
+
+int canWnuczkaEnterCs();
 
 #endif

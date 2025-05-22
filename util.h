@@ -22,20 +22,21 @@ typedef struct
 #define RELEASE 4
 
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
+#define MIN(a, b) ((a) < (b) ? (a) : (b))
 
 extern MPI_Datatype MPI_PAKIET_T;
 void inicjuj_typ_pakietu();
 
 /* wysyłanie pakietu, skrót: wskaźnik do pakietu (0 oznacza stwórz pusty pakiet), do kogo, z jakim typem */
-void sendPacket(packet_t *pkt, int destination, int tag);
+void sendPacket(packet_t *pkt, int destination, int tag, int clock);
 
 /* wysyłanie pakietu do babci, skrót: wskaźnik do pakietu (0 oznacza stwórz pusty pakiet), z jakim typem */
-void sendPacketToBabcie(packet_t *pkt, int tag);
+void sendPacketToBabcie(packet_t *pkt, int tag, int clock);
 
 /* wysyłanie pakietu do studentek, skrót: wskaźnik do pakietu (0 oznacza stwórz pusty pakiet), z jakim typem */
-void sendPacketToWnuczki(packet_t *pkt, int tag);
+void sendPacketToWnuczki(packet_t *pkt, int tag, int clock);
 
 /* wysyłanie pakietu do wszystkich, skrót: wskaźnik do pakietu (0 oznacza stwórz pusty pakiet), z jakim typem */
-void sendPacketToEveryone(packet_t *pkt, int tag);
+void sendPacketToEveryone(packet_t *pkt, int tag, int clock);
 
 #endif

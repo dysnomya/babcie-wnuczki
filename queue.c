@@ -55,12 +55,36 @@ void queueRemove(int pid)
     pthread_mutex_unlock(&queueMut);
 }
 
+int isPositionValid(int pid)
+{
+    pthread_mutex_lock(&queueMut);
+    pthread_mutex_lock(&critMut);
+    int i = 0;
+    int iterSize;
+
+    iterSize = MIN(pq.size, resource);
+
+    while (i < iterSize)
+    {   
+        if ((pq.queue[i]).src == pid)
+        {   
+            pthread_mutex_unlock(&queueMut);
+            pthread_mutex_unlock(&critMut);
+            return 1;
+        }
+        i++;
+    }
+    pthread_mutex_unlock(&queueMut);
+    pthread_mutex_unlock(&critMut);
+    return 0;
+}
+
 void printQueue()
 {
     pthread_mutex_lock(&queueMut);
 
     for (int i = 0; i < pq.size; i++) {
-        debug("PQ [%d] ts=%d, src=%d\n", i, pq.queue[i].ts, pq.queue[i].src);
+        debug("PQ [%d] ts=%d, src=%d", i, pq.queue[i].ts, pq.queue[i].src);
     }
 
     pthread_mutex_unlock(&queueMut);

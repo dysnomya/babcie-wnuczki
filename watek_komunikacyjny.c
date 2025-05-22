@@ -13,25 +13,36 @@ void *startKomWatek(void *ptr)
     {
         // debug("czekam na recv");
         MPI_Recv(&pakiet, 1, MPI_PAKIET_T, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
+        changeClock(pakiet.ts);
 
-        changeClock(MAX(ts, pakiet.ts) + 1);
-
-        debug("Dostałem pakiet od %d", pakiet.src);
+        debug("Dostałem %s od %d", tag2string(status.MPI_TAG), pakiet.src);
         
 
         switch (status.MPI_TAG)
         {
         case REQ_JAM:            
         case REQ_JAR:
-            sendPacket(pkt, pakiet.src, ACK);
+            incrementClock();
+            sendPacket(pkt, pakiet.src, ACK, ts);
 
             queueInsert(pakiet);
             printQueue();
-            
+
             break;
         case ACK:
+            changeAckNum(1);
+            break;
         case RELEASE:
-        // TODO: usuń z kolejki żądań
+            if ((rank < BABCIE) == (pakiet.src < BABCIE)) // XNOR -> we both gotta be grannies or students
+            {
+                queueRemove(pakiet.src);
+                changeResource(-1);
+            }
+            else
+            {
+                changeResource(1);
+            }
+            
             break;
         default:
             break;

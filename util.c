@@ -17,6 +17,25 @@ const char const *tag2string(int tag)
     }
     return "<unknown>";
 }
+
+struct stateNames_t
+{
+    const char *name;
+    state_t state;
+} stateNames[] = {{"IDLE", IDLE}, {"WAIT", WAIT}, {"IN  ", INSECTION}};
+
+const char const *state2string(state_t state)
+{
+    for (int i = 0; i < sizeof(stateNames) / sizeof(struct stateNames_t); i++)
+    {
+        if (stateNames[i].state == state)
+            return stateNames[i].name;
+    }
+    return "<unk>";
+}
+
+
+
 /* tworzy typ MPI_PAKIET_T
  */
 void inicjuj_typ_pakietu()
@@ -41,7 +60,7 @@ void inicjuj_typ_pakietu()
 }
 
 /* opis patrz util.h */
-void sendPacket(packet_t *pkt, int destination, int tag)
+void sendPacket(packet_t *pkt, int destination, int tag, int clock)
 {
     int freepkt = 0;
     if (pkt == 0)
@@ -50,71 +69,83 @@ void sendPacket(packet_t *pkt, int destination, int tag)
         freepkt = 1;
     }
 
-    // ustaw zegar
-    changeClock(ts + 1);
-
     pkt->src = rank;
-    pkt->ts = ts;
+
+    pkt->ts = clock;
 
 
     MPI_Send(pkt, 1, MPI_PAKIET_T, destination, tag, MPI_COMM_WORLD);
-    debug("Wysyłam %s do %d\n", tag2string(tag), destination);
+    debug("Wysyłam %s do %d", tag2string(tag), destination);
     if (freepkt)
         free(pkt);
 }
 
-void sendPacketToBabcie(packet_t *pkt, int tag)
+void sendPacketToBabcie(packet_t *pkt, int tag, int clock)
 {
     for (int i = 0; i < BABCIE; i++)
     {
         if (i != rank)
         { // dont send to yourself!!!
-            sendPacket(pkt, i, tag);
+            sendPacket(pkt, i, tag, clock);
         }
     }
 }
 
-void sendPacketToWnuczki(packet_t *pkt, int tag)
+void sendPacketToWnuczki(packet_t *pkt, int tag, int clock)
 {
     for (int i = BABCIE; i < size; i++)
     {
         if (i != rank)
         { // dont send to yourself!!!
-            sendPacket(pkt, i, tag);
+            sendPacket(pkt, i, tag, clock);
         }
     }
 }
 
-void sendPacketToEveryone(packet_t *pkt, int tag)
+void sendPacketToEveryone(packet_t *pkt, int tag, int clock)
 {
 
-    sendPacketToBabcie(pkt, tag);
-    sendPacketToWnuczki(pkt, tag);
+    sendPacketToBabcie(pkt, tag, clock);
+    sendPacketToWnuczki(pkt, tag, clock);
 }
 
 void changeState(state_t newState)
 {
     pthread_mutex_lock(&stateMut);
-    // if (stan == InFinish)
-    // {
-    //     pthread_mutex_unlock(&stateMut);
-    //     return;
-    // }
     stan = newState;
     pthread_mutex_unlock(&stateMut);
 }
 
-void changeClock(int newClock)
+void incrementClock()
 {
     pthread_mutex_lock(&clockMut);
-    ts = newClock;
+    ts++;
     pthread_mutex_unlock(&clockMut);
 }
 
-void changeAckNum(int newAck)
+void changeClock(int packetClock)
+{
+    pthread_mutex_lock(&clockMut);
+    ts = MAX(ts, packetClock) + 1;
+    pthread_mutex_unlock(&clockMut);
+
+}
+
+void changeAckNum(int increment)
 {
     pthread_mutex_lock(&ackMut);
-    ack_num = newAck;
+    if (increment)
+    {
+        ack_num++;
+    } else {
+        ack_num = 0;
+    }
     pthread_mutex_unlock(&ackMut);
 }
 
+void changeResource(int num)
+{
+    pthread_mutex_lock(&critMut);
+    resource = resource + num;
+    pthread_mutex_unlock(&critMut);
+}

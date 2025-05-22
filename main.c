@@ -10,10 +10,11 @@ pthread_t threadKom, threadMon;
 pthread_mutex_t stateMut = PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t clockMut = PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t queueMut = PTHREAD_MUTEX_INITIALIZER;
-pthread_mutex_t ackMut   = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t ackMut = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t critMut = PTHREAD_MUTEX_INITIALIZER;
 
-int jar = START_JAR;
-int jam = START_JAM;
+int resource;
+
 int ts = 0;
 int ack_num;
 
@@ -25,6 +26,7 @@ void finalizuj()
     pthread_mutex_destroy(&clockMut);
     pthread_mutex_destroy(&queueMut);
     pthread_mutex_destroy(&ackMut);
+    pthread_mutex_destroy(&critMut);
     /* Czekamy, aż wątek potomny się zakończy */
     println("czekam na wątek \"komunikacyjny\"\n");
     pthread_join(threadKom, NULL);
@@ -70,6 +72,11 @@ int main(int argc, char **argv)
     packet_t pkt;
     MPI_Comm_size(MPI_COMM_WORLD, &size);
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+
+    if (rank < BABCIE)
+        resource = START_JAR;
+    else
+        resource = START_JAM;
     pthread_create(&threadKom, NULL, startKomWatek, 0);
 
     mainLoop();
