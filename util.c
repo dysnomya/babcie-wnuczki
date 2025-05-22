@@ -110,3 +110,11 @@ void changeClock(int newClock)
     ts = newClock;
     pthread_mutex_unlock(&clockMut);
 }
+
+void changeAckNum(int newAck)
+{
+    pthread_mutex_lock(&ackMut);
+    ack_num = newAck;
+    pthread_mutex_unlock(&ackMut);
+}
+

@@ -24,7 +24,10 @@ void *startKomWatek(void *ptr)
         case REQ_JAM:            
         case REQ_JAR:
             sendPacket(pkt, pakiet.src, ACK);
-            // TODO: dodaj do kolejki żądań
+
+            queueInsert(pakiet);
+            printQueue();
+            
             break;
         case ACK:
         case RELEASE:

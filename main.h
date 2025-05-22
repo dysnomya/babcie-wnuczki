@@ -9,15 +9,19 @@
 #include <pthread.h>
 
 #include "util.h"
+#include "queue.h"
+
 /* boolean */
 #define TRUE 1
 #define FALSE 0
+
+
+// można zmieniać:
 #define SEC_IN_STATE 1
 #define STATE_CHANGE_PROB 10
-
-#define ROOT 0
-
-#define BABCIE 4 // TODO: zrobić żeby 
+#define BABCIE 4 // ile procesów babci. Studentek będzie ile uruchomionych procesów - ile babci
+#define START_JAM 1 // z jaką pulą konfitur zaczyna program
+#define START_JAR 1 // z jaką pulą słoików zaczyna program
 
 extern int rank;
 extern int size;
@@ -33,11 +37,15 @@ extern pthread_t threadKom, threadMon;
 
 extern pthread_mutex_t stateMut;
 extern pthread_mutex_t clockMut;
-
+extern pthread_mutex_t queueMut;
+extern pthread_mutex_t ackMut;
 
 extern int jar;
 extern int jam;
 extern int ts;
+extern int ack_num;
+
+extern PriorityQueue pq;
 
 /* macro debug - działa jak printf, kiedy zdefiniowano
    DEBUG, kiedy DEBUG niezdefiniowane działa jak instrukcja pusta
@@ -70,5 +78,7 @@ extern int ts;
 void changeState(state_t);
 
 void changeClock(int newClock);
+
+void changeAckNum(int newAck);
 
 #endif

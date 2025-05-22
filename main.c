@@ -5,19 +5,26 @@
 int rank, size;
 state_t stan = IDLE;
 pthread_t threadKom, threadMon;
+
+// gotta say the goofiest locks i did in my life probably not correct thoXDD
 pthread_mutex_t stateMut = PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t clockMut = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t queueMut = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t ackMut   = PTHREAD_MUTEX_INITIALIZER;
 
-
-int jar = 1;
-int jam = 1;
-
+int jar = START_JAR;
+int jam = START_JAM;
 int ts = 0;
+int ack_num;
+
+PriorityQueue pq = {.size = 0};
 
 void finalizuj()
 {
     pthread_mutex_destroy(&stateMut);
     pthread_mutex_destroy(&clockMut);
+    pthread_mutex_destroy(&queueMut);
+    pthread_mutex_destroy(&ackMut);
     /* Czekamy, aż wątek potomny się zakończy */
     println("czekam na wątek \"komunikacyjny\"\n");
     pthread_join(threadKom, NULL);
