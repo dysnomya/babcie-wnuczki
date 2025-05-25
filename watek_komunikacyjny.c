@@ -7,7 +7,7 @@ void *startKomWatek(void *ptr)
     MPI_Status status;
     int is_message = FALSE;
     packet_t pakiet;
-    packet_t *pkt;
+    packet_t *pkt = malloc(sizeof(packet_t));
     /* Obrazuje pętlę odbierającą pakiety o różnych typach */
     while (1)
     {
@@ -15,7 +15,7 @@ void *startKomWatek(void *ptr)
         MPI_Recv(&pakiet, 1, MPI_PAKIET_T, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
         changeClock(pakiet.ts);
 
-        //debug("Dostałem %s od %d", tag2string(status.MPI_TAG), pakiet.src);
+        debug("Dostałem %s od %d", tag2string(status.MPI_TAG), pakiet.src);
         
 
         switch (status.MPI_TAG)
