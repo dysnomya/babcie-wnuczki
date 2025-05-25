@@ -13,5 +13,5 @@ clean:
 	rm main a.out
 
 run: main
-	mpirun ./main
+	mpirun -np 6 ./main
 	# mpirun -oversubscribe -np 16 ./main

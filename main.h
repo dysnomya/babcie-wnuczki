@@ -19,9 +19,9 @@
 // można zmieniać:
 #define SEC_IN_STATE 1
 #define STATE_CHANGE_PROB 5
-#define BABCIE 1 // ile procesów babci. Studentek będzie ile uruchomionych procesów - ile babci
-#define START_JAM 2 // z jaką pulą konfitur zaczyna program
-#define START_JAR 2 // z jaką pulą słoików zaczyna program
+#define BABCIE 3 // ile procesów babci. Studentek będzie ile uruchomionych procesów - ile babci
+#define START_JAM 3 // z jaką pulą konfitur zaczyna program
+#define START_JAR 3 // z jaką pulą słoików zaczyna program
 
 extern int rank;
 extern int size;

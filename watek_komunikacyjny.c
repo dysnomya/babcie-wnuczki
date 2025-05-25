@@ -20,7 +20,7 @@ void *startKomWatek(void *ptr)
 
         switch (status.MPI_TAG)
         {
-        case REQ_JAM:            
+        case REQ_JAM:   
         case REQ_JAR:
             incrementClock();
             sendPacket(pkt, pakiet.src, ACK, ts);

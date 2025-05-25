@@ -22,8 +22,6 @@ void mainLoop()
                 packet_t *pkt = malloc(sizeof(packet_t));
                 pkt->src = rank;
 
-                // TODO: THERE IS A PROBLEM WHEN THERE IS 1 PROCESS IN A GROUP: HE DOESNT SEND SO WHY WOULD HE MAKE HIS CLOCK HIGHER + idk what with clock. i mean it works just is it correct? XD
-
                 changeAckNum(0); // before changing state so that they dont send ack earlier
                 incrementClock();
 
@@ -42,7 +40,7 @@ void mainLoop()
 
                 queueInsert(*pkt);
                 changeState(WAIT);
-                printQueue();
+                //printQueue();
 
                 debug("SKOŃCZYŁEM WYSYŁAĆ TO TERAZ CZEKAM NA WEJŚCIE DO SEKCJI KRYTYCZNEJ");
             }
@@ -109,7 +107,7 @@ int canBabciaEnterCs()
         pthread_mutex_unlock(&ackMut);
         return 0;
     }
-    debug("MAM WSZYSTKIE ACK: %d", ack_num);
+    //debug("MAM WSZYSTKIE ACK: %d", ack_num);
 
     pthread_mutex_unlock(&ackMut);
 
@@ -129,7 +127,7 @@ int canWnuczkaEnterCs()
         pthread_mutex_unlock(&ackMut);
         return 0;
     }
-    debug("MAM WSZYSTKIE ACK: %d", ack_num);
+    //debug("MAM WSZYSTKIE ACK: %d", ack_num);
 
     pthread_mutex_unlock(&ackMut);
 

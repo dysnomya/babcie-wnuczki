@@ -15,7 +15,7 @@ void queueInsert(packet_t newPacket)
     if (pq.size >= MAX_QUEUE)
     {
         pthread_mutex_unlock(&queueMut);
-        return; // TODO: throw an exception or some shit that breaks a program idk how it works in c xd
+        return; 
     }
 
     int i = pq.size - 1;
@@ -63,7 +63,7 @@ int isPositionValid(int pid)
     int iterSize;
 
     iterSize = MIN(pq.size, resource);
-    debug("%d", iterSize);
+    //debug("%d", iterSize);
 
     while (i < iterSize)
     {   
