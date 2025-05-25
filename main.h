@@ -41,6 +41,9 @@ extern pthread_mutex_t queueMut;
 extern pthread_mutex_t ackMut;
 extern pthread_mutex_t critMut;
 
+extern pthread_mutex_t waitMut;
+extern pthread_cond_t waitCond;
+
 extern int resource;
 
 extern int ts;

@@ -13,6 +13,9 @@ pthread_mutex_t queueMut = PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t ackMut = PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t critMut = PTHREAD_MUTEX_INITIALIZER;
 
+pthread_mutex_t waitMut = PTHREAD_MUTEX_INITIALIZER;
+pthread_cond_t waitCond = PTHREAD_COND_INITIALIZER;
+
 int resource;
 
 int ts = 0;
@@ -27,6 +30,7 @@ void finalizuj()
     pthread_mutex_destroy(&queueMut);
     pthread_mutex_destroy(&ackMut);
     pthread_mutex_destroy(&critMut);
+    pthread_mutex_destroy(&waitMut);
     /* Czekamy, aż wątek potomny się zakończy */
     println("czekam na wątek \"komunikacyjny\"\n");
     pthread_join(threadKom, NULL);

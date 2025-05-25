@@ -40,7 +40,6 @@ void mainLoop()
 
                 queueInsert(*pkt);
                 changeState(WAIT);
-                //printQueue();
 
                 debug("SKOŃCZYŁEM WYSYŁAĆ TO TERAZ CZEKAM NA WEJŚCIE DO SEKCJI KRYTYCZNEJ");
             }
@@ -48,25 +47,25 @@ void mainLoop()
             break;
 
         case WAIT:
+            pthread_mutex_lock(&waitMut);
+            while (!((rank < BABCIE && canBabciaEnterCs()) || (rank >= BABCIE && canWnuczkaEnterCs()))) 
+            {
+                pthread_cond_wait(&waitCond, &waitMut);
+            }
+            pthread_mutex_unlock(&waitMut);
+        
+            changeState(INSECTION);
 
             if (rank < BABCIE)
             {
-                if (canBabciaEnterCs())
-                {
-                    changeState(INSECTION);
-                    debug("Wchodzę do sekcji krytycznej I CZAS ROBIĆ KONFITURE");
-                }
+                debug("Wchodzę do sekcji krytycznej I CZAS ROBIĆ KONFITURE");
             }
             else
             {
-                if (canWnuczkaEnterCs())
-                {
-                    changeState(INSECTION);
-                    debug("Wchodzę do sekcji krytycznej I CZAS JEŚĆ KONFITURE");
-                    break;
-                }
+                debug("Wchodzę do sekcji krytycznej I CZAS JEŚĆ KONFITURE");
             }
             break;
+
         case INSECTION:
             perc = random() % 100;
 
@@ -88,7 +87,6 @@ void mainLoop()
                 changeResource(-1);
 
                 queueRemove(rank);
-                // printQueue();
             }
             break;
         default:
@@ -107,7 +105,7 @@ int canBabciaEnterCs()
         pthread_mutex_unlock(&ackMut);
         return 0;
     }
-    //debug("MAM WSZYSTKIE ACK: %d", ack_num);
+    debug("MAM WSZYSTKIE ACK: %d", ack_num);
 
     pthread_mutex_unlock(&ackMut);
 
@@ -127,7 +125,7 @@ int canWnuczkaEnterCs()
         pthread_mutex_unlock(&ackMut);
         return 0;
     }
-    //debug("MAM WSZYSTKIE ACK: %d", ack_num);
+    debug("MAM WSZYSTKIE ACK: %d", ack_num);
 
     pthread_mutex_unlock(&ackMut);
 
