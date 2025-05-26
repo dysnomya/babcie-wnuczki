@@ -62,6 +62,7 @@ void inicjuj_typ_pakietu()
 /* opis patrz util.h */
 void sendPacket(packet_t *pkt, int destination, int tag, int clock)
 {
+    pthread_mutex_lock(&clockMut);
     int freepkt = 0;
     if (pkt == 0)
     {
@@ -78,6 +79,8 @@ void sendPacket(packet_t *pkt, int destination, int tag, int clock)
     // debug("Wysyłam %s do %d", tag2string(tag), destination);
     if (freepkt)
         free(pkt);
+
+    pthread_mutex_unlock(&clockMut);
 }
 
 void sendPacketToBabcie(packet_t *pkt, int tag, int clock)
